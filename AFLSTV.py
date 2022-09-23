@@ -7,6 +7,8 @@ import pandas
 _INFILEPATH = "player_data.csv" #location of the match data. Needs to be Fryzigg
 removeFinals = True #excludes finals games from calculations
 selectionType = "ALLAUS" #controls how many players are selected "ALLAUS" - 23 (with interchange and sub noted), "BROWNLOW" - 1 brownlow winner, enter any other number  as a string for a custom value
+voteField = "rating_points" #which field to use
+voteFieldName = "rating points" #name of the field in output
 enableLog = True #outputs to a log file
 verboseLog = True #if enableLog == True then this outputs every single player elimination and selection in order
 #########
@@ -97,9 +99,9 @@ ballots: List[Ballot] = []
 accruedPoints: Dict[int,float] = dict.fromkeys(player_ids,0.0)
 
 for m in matches:
-    sortedMatch = m.sort_values(by=["rating_points"], ascending=False)
+    sortedMatch = m.sort_values(by=[voteField], ascending=False)
     orderedPlayers = sortedMatch["player_id"]
-    orderedScore = sortedMatch["rating_points"]
+    orderedScore = sortedMatch[voteField]
 
     b = Ballot()
     for z in zip(orderedPlayers,orderedScore):
@@ -152,7 +154,7 @@ while len(elected) < teamsize:
         eliminated.append(worstCandidate)
 
         if enableLog and verboseLog:
-            outLog.append(f"{playerToStr(worstCandidate)} ELIMINATED with {currentTally[worstCandidate]} B.O.G. equivalents and {accruedPoints[worstCandidate]} rating points.")
+            outLog.append(f"{playerToStr(worstCandidate)} ELIMINATED with {currentTally[worstCandidate]} B.O.G. equivalents and {accruedPoints[worstCandidate]} {voteFieldName}.")
 
     remaining = [id for id in player_ids if id not in elected and id not in eliminated]
 
