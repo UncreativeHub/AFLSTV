@@ -7,8 +7,10 @@ import pandas
 _INFILEPATH = "player_data.csv" #location of the match data. Needs to be Fryzigg
 removeFinals = True #excludes finals games from calculations
 selectionType = "ALLAUS" #controls how many players are selected "ALLAUS" - 23 (with interchange and sub noted), "BROWNLOW" - 1 brownlow winner, enter any other number  as a string for a custom value
-voteField = "rating_points" #which field to use
-voteFieldName = "rating points" #name of the field in output
+#voteField = "rating_points" #which field to use
+#voteFieldName = "rating points" #name of the field in output
+voteField = "afl_fantasy_score"
+voteFieldName = "fantasy points"
 enableLog = True #outputs to a log file
 verboseLog = True #if enableLog == True then this outputs every single player elimination and selection in order
 #########
@@ -58,7 +60,7 @@ with open(_INFILEPATH) as pdFile:
 
 #remove finals
 if removeFinals:
-    playerData = playerData[~playerData["match_round"].str.contains("Final", na=False)]
+    playerData = playerData[~playerData["match_round"].apply(str).str.contains("Final", na=False)]
 
 match_ids = playerData["match_id"].drop_duplicates()
 matches: List[pandas.DataFrame] = []
